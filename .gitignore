@@ -1,0 +1,37 @@
+# Android/Gradle build output
+.gradle/
+**/build/
+**/captures/
+.externalNativeBuild/
+.cxx/
+
+# Local machine configuration
+local.properties
+
+# IDE files
+.idea/
+*.iml
+
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+*.DS_Store
+Thumbs.db
+
+# Android signing and secrets
+*.jks
+*.keystore
+*.pem
+*.p12
+*.key
+
+# Local SDK/tooling downloads and unpacked toolchains
+android-sdk/
+commandlinetools.zip
+gradle-8.7/
+gradle-8.7-bin.zip
+
+# Kotlin/Java artifacts
+*.class
+out/

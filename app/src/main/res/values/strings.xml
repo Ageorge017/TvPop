@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TvPop</string>
+    <string name="main_status_text">TvPop is running. You may close this screen.</string>
+    <string name="service_channel_name">TvPop Service</string>
+    <string name="service_notification_title">TvPop running</string>
+    <string name="service_notification_text">Listening on port 7979</string>
+</resources>

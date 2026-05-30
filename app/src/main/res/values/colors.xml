@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="overlay_default_background">#CC000000</color>
+    <color name="overlay_default_title">#FFFFFF</color>
+    <color name="overlay_default_message">#CCCCCC</color>
+    <color name="launcher_bg">#0D1B2A</color>
+    <color name="launcher_accent">#56CCF2</color>
+    <color name="launcher_accent_dark">#2F80ED</color>
+    <color name="banner_bg_start">#0D1B2A</color>
+    <color name="banner_bg_end">#1B263B</color>
+</resources>
