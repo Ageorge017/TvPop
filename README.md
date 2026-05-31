@@ -26,12 +26,12 @@ It exists to solve the reliability and latency issues found in existing solution
 
 ## Demo
 
-![TvPop overlay demo](docs/images/demo.gif)
+![TvPop overlay demo](./docs/images/demo.gif)
 *Caption: Stream overlay triggered by Home Assistant automation*
 
 | Text                                                | Image                                                 | Stream | Home Assistant YAML |
 |:----------------------------------------------------|:------------------------------------------------------| :--- |:--------------------|
-| ![Text screenshot](docs/images/text_screenshot.jpg) | ![Image screenshot](docs/images/image_screenshot.jpg) | ![Stream screenshot](docs/images/demo.gif) | `-`                 |
+| ![Text screenshot](./docs/images/text_screenshot.jpg) | ![Image screenshot](./docs/images/image_screenshot.jpg) | ![Stream screenshot](./docs/images/demo.gif) | `-`                 |
 
 ## Prerequisites
 
