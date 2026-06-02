@@ -11,5 +11,6 @@ data class OverlayState(
     val cornerRadiusDp: Float,
     val backgroundColor: String,
     val titleColor: String,
-    val messageColor: String
+    val messageColor: String,
+    val muted: Boolean
 )
