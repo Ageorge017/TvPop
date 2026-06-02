@@ -91,6 +91,7 @@ class OverlayManager(private val context: Context) {
         val existing = currentOverlayState
         if (existing != null && overlayView != null && shouldUpdateInPlace(existing, newState)) {
             applyTextAndStyles(newState)
+            applyMuteToPlayer(newState.muted)
             val updatedParams = createLayoutParams(newState)
             layoutParams = updatedParams
             overlayView?.let { windowManager.updateViewLayout(it, updatedParams) }
@@ -116,7 +117,7 @@ class OverlayManager(private val context: Context) {
         }
         overlayView?.let { windowManager.addView(it, params) }
         if (newState.mediaType == "stream") {
-            bindAndStartStream(newState.mediaUrl)
+            bindAndStartStream(newState.mediaUrl, newState.muted)
         }
 
         currentOverlayState = newState
@@ -185,7 +186,11 @@ class OverlayManager(private val context: Context) {
         }
     }
 
-    private fun bindAndStartStream(mediaUrl: String?) {
+    private fun applyMuteToPlayer(muted: Boolean) {
+        player?.volume = if (muted) 0f else 1f
+    }
+
+    private fun bindAndStartStream(mediaUrl: String?, muted: Boolean) {
         val targetUrl = mediaUrl.orEmpty()
         if (targetUrl.isBlank()) {
             Log.e(logTag, "Stream URL is blank")
@@ -217,6 +222,7 @@ class OverlayManager(private val context: Context) {
                     .build()
 
                 player = exo
+                exo.volume = if (muted) 0f else 1f
                 exo.addListener(object : Player.Listener {
                     override fun onPlayerError(error: PlaybackException) {
                         Log.e(logTag, "Stream playback error: ${error.errorCodeName} ${error.message}", error)
@@ -348,7 +354,8 @@ class OverlayManager(private val context: Context) {
             cornerRadiusDp = if (cornerRadiusDp <= 0f) 12.0f else cornerRadiusDp,
             backgroundColor = backgroundColor,
             titleColor = titleColor,
-            messageColor = messageColor
+            messageColor = messageColor,
+            muted = muted
         )
     }
 }

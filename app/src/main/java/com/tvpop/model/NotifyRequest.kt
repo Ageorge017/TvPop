@@ -15,5 +15,6 @@ data class NotifyRequest(
     @SerialName("corner_radius") val cornerRadiusDp: Float = 12.0f,
     @SerialName("background_color") val backgroundColor: String = "#CC000000",
     @SerialName("title_color") val titleColor: String = "#FFFFFF",
-    @SerialName("message_color") val messageColor: String = "#CCCCCC"
+    @SerialName("message_color") val messageColor: String = "#CCCCCC",
+    val muted: Boolean = false
 )

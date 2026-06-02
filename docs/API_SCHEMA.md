@@ -26,6 +26,7 @@ Triggers a new overlay or updates an existing one.
 | `background_color` | String | No | `"#CC000000"` | Hex ARGB (e.g., `#RRGGBB` or `#AARRGGBB`). | Background fill of the card. |
 | `title_color` | String | No | `"#FFFFFF"` | Hex RGB/ARGB. | Color of the title text. |
 | `message_color` | String | No | `"#CCCCCC"` | Hex RGB/ARGB. | Color of the message text. |
+| `muted` | Boolean | No | `false` | `true` or `false`. | Mutes stream audio when `true`. Only meaningful for `stream` media type. |
 
 #### Responses
 
@@ -107,7 +108,7 @@ When a `/notify` request is received while an overlay is already visible, TvPop 
 ### Decision Logic
 1. If the current overlay and the new request both have `media_type: "text"`, **REPLACE** (always recreate for text notifications).
 2. If the `media_url` and `media_type` of the new request exactly match the current state, **UPDATE IN-PLACE**.
-   - This keeps the video stream or image loaded and only updates text, colors, and layout parameters.
+   - This keeps the video stream or image loaded and only updates text, colors, layout parameters, and mute state.
    - The auto-dismiss timer is reset.
 3. In all other cases, **REPLACE**.
    - The old player is released, the view is removed, and a brand new overlay is created.
@@ -139,7 +140,7 @@ if (currentOverlay != null) {
 | :--- | :--- | :--- | :--- |
 | `text` | `title`, `message`, styles | `media_url` | Purely informational text overlay. |
 | `image` | `media_url`, `title`, `message`, styles | N/A | Loads image via Coil. Supports transparency. |
-| `stream` | `media_url`, `title`, `message`, styles | N/A | Renders via ExoPlayer. Supports HLS, RTSP, and progressive MP4. |
+| `stream` | `media_url`, `title`, `message`, `muted`, styles | N/A | Renders via ExoPlayer. Supports HLS, RTSP, and progressive MP4. |
 
 ---
 
