@@ -9,11 +9,13 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.tvpop.config.AppPreferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class TvPopService : Service() {
     private val logTag = "TvPop"
@@ -22,22 +24,47 @@ class TvPopService : Service() {
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
+    private lateinit var preferences: AppPreferences
     private lateinit var overlayManager: OverlayManager
-    private lateinit var httpServer: HttpServer
+    private var httpServer: HttpServer? = null
+    private var mqttTransport: MqttTransport? = null
 
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
         startAsForeground()
 
+        preferences = AppPreferences(applicationContext)
         overlayManager = OverlayManager(applicationContext)
-        httpServer = HttpServer(overlayManager)
 
         serviceScope.launch {
-            try {
-                httpServer.start()
-            } catch (t: Throwable) {
-                Log.e(logTag, "Failed to start HTTP server", t)
+            if (preferences.httpEnabled) {
+                try {
+                    httpServer = HttpServer(overlayManager, AppPreferences.HTTP_PORT).also { it.start() }
+                    Log.i(logTag, "HTTP server started on port ${AppPreferences.HTTP_PORT}")
+                } catch (t: Throwable) {
+                    Log.e(logTag, "Failed to start HTTP server", t)
+                }
+            } else {
+                Log.i(logTag, "HTTP server disabled by settings")
+            }
+
+            if (preferences.mqttEnabled) {
+                try {
+                    mqttTransport = MqttTransport(applicationContext, overlayManager, preferences, serviceScope).also {
+                        it.start()
+                    }
+                    Log.i(logTag, "MQTT transport started")
+                } catch (t: Throwable) {
+                    Log.e(logTag, "Failed to start MQTT transport", t)
+                }
+            } else {
+                Log.i(logTag, "MQTT transport disabled by settings")
+                MqttRuntimeStatusStore.setState(
+                    state = MqttConnectionState.DISABLED,
+                    reconnectAttempts = 0,
+                    subscribedTopics = emptyList()
+                )
             }
         }
     }
@@ -53,11 +80,25 @@ class TvPopService : Service() {
             Log.e(logTag, "Overlay shutdown failed", t)
         }
 
-        try {
-            httpServer.stop()
-        } catch (t: Throwable) {
-            Log.e(logTag, "HTTP server stop failed", t)
+        httpServer?.let {
+            try {
+                it.stop()
+            } catch (t: Throwable) {
+                Log.e(logTag, "HTTP server stop failed", t)
+            }
         }
+        httpServer = null
+
+        mqttTransport?.let {
+            try {
+                runBlocking(Dispatchers.IO) {
+                    it.stop()
+                }
+            } catch (t: Throwable) {
+                Log.e(logTag, "MQTT transport stop failed", t)
+            }
+        }
+        mqttTransport = null
 
         serviceScope.cancel()
         super.onDestroy()

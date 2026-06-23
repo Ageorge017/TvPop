@@ -6,14 +6,17 @@ import android.graphics.PixelFormat
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import android.provider.Settings
 import android.util.Log
+import android.view.KeyEvent
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.SurfaceView
 import android.view.View
 import android.view.WindowManager
 import android.widget.ImageView
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
@@ -30,11 +33,13 @@ import androidx.media3.exoplayer.rtsp.RtspMediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.datasource.DefaultDataSource
 import coil.load
+import com.tvpop.config.AppPreferences
 import com.tvpop.model.NotifyRequest
 import com.tvpop.model.OverlayState
 
 class OverlayManager(private val context: Context) {
     private val logTag = "TvPop"
+    private val preferences = AppPreferences(context)
     private val mainHandler = Handler(Looper.getMainLooper())
     private val dismissHandler = Handler(Looper.getMainLooper())
     private val windowManager: WindowManager =
@@ -47,12 +52,22 @@ class OverlayManager(private val context: Context) {
     private var cardView: CardView? = null
     private var surfaceView: SurfaceView? = null
     private var imageView: ImageView? = null
+    private var dismissButton: Button? = null
     private var textContainer: LinearLayout? = null
     private var titleText: TextView? = null
     private var messageText: TextView? = null
 
     private var player: ExoPlayer? = null
     private var currentOverlayState: OverlayState? = null
+    private var pendingOverlayState: OverlayState? = null
+    private var lastShownAtMs: Long = 0L
+
+    private val debounceRunnable = Runnable {
+        val pending = pendingOverlayState ?: return@Runnable
+        pendingOverlayState = null
+        lastShownAtMs = SystemClock.elapsedRealtime()
+        dispatchShowInternal(pending)
+    }
 
     private val dismissRunnable = Runnable {
         try {
@@ -65,21 +80,40 @@ class OverlayManager(private val context: Context) {
     fun show(request: NotifyRequest) {
         val normalized = request.toOverlayState()
         mainHandler.post {
-            try {
-                showInternal(normalized)
-            } catch (t: Throwable) {
-                Log.e(logTag, "Overlay show failed", t)
+            val debounceMs = preferences.overlayDebounceMs
+            val now = SystemClock.elapsedRealtime()
+            val elapsed = now - lastShownAtMs
+
+            if (debounceMs > 0 && elapsed < debounceMs.toLong()) {
+                pendingOverlayState = normalized
+                mainHandler.removeCallbacks(debounceRunnable)
+                mainHandler.postDelayed(debounceRunnable, debounceMs - elapsed)
+            } else {
+                pendingOverlayState = null
+                mainHandler.removeCallbacks(debounceRunnable)
+                lastShownAtMs = now
+                dispatchShowInternal(normalized)
             }
         }
     }
 
     fun cancel() {
         mainHandler.post {
+            pendingOverlayState = null
+            mainHandler.removeCallbacks(debounceRunnable)
             try {
                 cancelInternal()
             } catch (t: Throwable) {
                 Log.e(logTag, "Overlay cancel failed", t)
             }
+        }
+    }
+
+    private fun dispatchShowInternal(state: OverlayState) {
+        try {
+            showInternal(state)
+        } catch (t: Throwable) {
+            Log.e(logTag, "Overlay show failed", t)
         }
     }
 
@@ -116,6 +150,9 @@ class OverlayManager(private val context: Context) {
             return
         }
         overlayView?.let { windowManager.addView(it, params) }
+        overlayView?.post {
+            dismissButton?.requestFocus()
+        }
         if (newState.mediaType == "stream") {
             bindAndStartStream(newState.mediaUrl, newState.muted)
         }
@@ -139,9 +176,33 @@ class OverlayManager(private val context: Context) {
         cardView = view.findViewById(R.id.overlayCard)
         surfaceView = view.findViewById(R.id.surfaceView)
         imageView = view.findViewById(R.id.imageView)
+        dismissButton = view.findViewById(R.id.dismissButton)
         textContainer = view.findViewById(R.id.textContainer)
         titleText = view.findViewById(R.id.titleText)
         messageText = view.findViewById(R.id.messageText)
+
+        dismissButton?.setOnClickListener {
+            cancel()
+        }
+
+        view.isFocusable = true
+        view.isFocusableInTouchMode = true
+        view.setOnKeyListener { _, keyCode, event ->
+            if (event.action != KeyEvent.ACTION_UP) {
+                return@setOnKeyListener false
+            }
+
+            if (
+                keyCode == KeyEvent.KEYCODE_BACK ||
+                keyCode == KeyEvent.KEYCODE_DPAD_CENTER ||
+                keyCode == KeyEvent.KEYCODE_ENTER
+            ) {
+                cancel()
+                return@setOnKeyListener true
+            }
+
+            false
+        }
     }
 
     private fun applyTextAndStyles(state: OverlayState) {
@@ -270,8 +331,7 @@ class OverlayManager(private val context: Context) {
             dpToPx(state.widthDp),
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
+            WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
                 WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
             PixelFormat.TRANSLUCENT
         ).apply {
@@ -320,6 +380,7 @@ class OverlayManager(private val context: Context) {
         cardView = null
         surfaceView = null
         imageView = null
+        dismissButton = null
         textContainer = null
         titleText = null
         messageText = null

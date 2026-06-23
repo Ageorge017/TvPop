@@ -38,7 +38,6 @@ android {
     packaging {
         resources {
             excludes += "META-INF/INDEX.LIST"
-            excludes += "META-INF/io.netty.versions.properties"
         }
     }
 }
@@ -48,7 +47,7 @@ dependencies {
     implementation("androidx.leanback:leanback:1.0.0")
 
     implementation("io.ktor:ktor-server-core:2.3.11")
-    implementation("io.ktor:ktor-server-netty:2.3.11")
+    implementation("io.ktor:ktor-server-cio:2.3.11")
     implementation("io.ktor:ktor-server-content-negotiation:2.3.11")
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.11")
     implementation("io.ktor:ktor-server-call-logging:2.3.11")
@@ -60,6 +59,7 @@ dependencies {
 
     implementation("io.coil-kt:coil:2.6.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    implementation("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5")
 
     implementation("androidx.cardview:cardview:1.0.0")
 }
