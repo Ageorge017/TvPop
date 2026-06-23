@@ -2,7 +2,37 @@
 <resources>
     <string name="app_name">TvPop</string>
     <string name="main_status_text">TvPop is running. You may close this screen.</string>
+    <string name="main_protocol_status_default">Protocols: loading...</string>
+    <string name="main_protocol_status_format">Protocols: HTTP %1$s | MQTT %2$s</string>
+    <string name="main_mqtt_runtime_default">MQTT runtime: disabled</string>
+    <string name="main_mqtt_runtime_format">MQTT runtime: %1$s | retries=%2$d</string>
+    <string name="main_mqtt_runtime_error_format">MQTT runtime: %1$s | retries=%2$d | last error: %3$s</string>
+    <string name="mqtt_state_disabled">DISABLED</string>
+    <string name="mqtt_state_connecting">CONNECTING</string>
+    <string name="mqtt_state_connected">CONNECTED</string>
+    <string name="mqtt_state_reconnecting">RECONNECTING</string>
+    <string name="mqtt_state_disconnected">DISCONNECTED</string>
+    <string name="mqtt_state_error">ERROR</string>
+    <string name="main_enabled">ON</string>
+    <string name="main_disabled">OFF</string>
+    <string name="main_open_settings">Open Settings</string>
+    <string name="main_refresh_status">Refresh Status</string>
+
+    <string name="settings_title">TvPop Transport Settings</string>
+    <string name="settings_http_enabled">Enable HTTP server (port 7979)</string>
+    <string name="settings_mqtt_enabled">Enable MQTT subscriber</string>
+    <string name="settings_mqtt_broker_url">MQTT Broker URL (tcp://host:1883)</string>
+    <string name="settings_mqtt_device_id">MQTT Device ID</string>
+    <string name="settings_mqtt_username">MQTT Username (optional)</string>
+    <string name="settings_mqtt_password">MQTT Password (optional)</string>
+    <string name="settings_mqtt_keepalive">MQTT Keepalive seconds (10-300)</string>
+    <string name="settings_overlay_debounce">Overlay debounce window ms (0-2000)</string>
+    <string name="settings_mqtt_clean_session">Use clean session</string>
+    <string name="settings_topics_format">Topics:\n- %1$s\n- %2$s\n- %3$s\n- %4$s</string>
+    <string name="settings_save">Save and Restart Service</string>
+    <string name="overlay_dismiss">Dismiss</string>
+
     <string name="service_channel_name">TvPop Service</string>
     <string name="service_notification_title">TvPop running</string>
-    <string name="service_notification_text">Listening on port 7979</string>
+    <string name="service_notification_text">HTTP/MQTT transport active</string>
 </resources>

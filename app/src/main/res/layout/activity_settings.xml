@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black"
+    android:padding="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_title"
+            android:textColor="@android:color/white"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <Switch
+            android:id="@+id/httpSwitch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/settings_http_enabled"
+            android:textColor="@android:color/white" />
+
+        <Switch
+            android:id="@+id/mqttSwitch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/settings_mqtt_enabled"
+            android:textColor="@android:color/white" />
+
+        <EditText
+            android:id="@+id/mqttBrokerUrlInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:autofillHints=""
+            android:hint="@string/settings_mqtt_broker_url"
+            android:imeOptions="actionNext"
+            android:inputType="textUri"
+            android:textColor="@android:color/white"
+            android:textColorHint="#AAFFFFFF" />
+
+        <EditText
+            android:id="@+id/mqttDeviceIdInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:autofillHints=""
+            android:hint="@string/settings_mqtt_device_id"
+            android:imeOptions="actionNext"
+            android:inputType="text"
+            android:textColor="@android:color/white"
+            android:textColorHint="#AAFFFFFF" />
+
+        <EditText
+            android:id="@+id/mqttUsernameInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:autofillHints="username"
+            android:hint="@string/settings_mqtt_username"
+            android:imeOptions="actionNext"
+            android:inputType="text"
+            android:textColor="@android:color/white"
+            android:textColorHint="#AAFFFFFF" />
+
+        <EditText
+            android:id="@+id/mqttPasswordInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:autofillHints="password"
+            android:hint="@string/settings_mqtt_password"
+            android:imeOptions="actionNext"
+            android:inputType="textPassword"
+            android:textColor="@android:color/white"
+            android:textColorHint="#AAFFFFFF" />
+
+        <EditText
+            android:id="@+id/mqttKeepAliveInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:autofillHints=""
+            android:hint="@string/settings_mqtt_keepalive"
+            android:imeOptions="actionDone"
+            android:inputType="number"
+            android:textColor="@android:color/white"
+            android:textColorHint="#AAFFFFFF" />
+
+        <EditText
+            android:id="@+id/debounceMsInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:autofillHints=""
+            android:hint="@string/settings_overlay_debounce"
+            android:imeOptions="actionDone"
+            android:inputType="number"
+            android:textColor="@android:color/white"
+            android:textColorHint="#AAFFFFFF" />
+
+        <Switch
+            android:id="@+id/cleanSessionSwitch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/settings_mqtt_clean_session"
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:id="@+id/topicsText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textColor="#FFCCCCCC"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/settings_save" />
+    </LinearLayout>
+</ScrollView>

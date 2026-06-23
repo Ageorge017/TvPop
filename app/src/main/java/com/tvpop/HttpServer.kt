@@ -6,8 +6,8 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.call
 import io.ktor.server.application.install
+import io.ktor.server.cio.CIO
 import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
@@ -22,11 +22,14 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.slf4j.event.Level
 
-class HttpServer(private val overlayManager: OverlayManager) {
+class HttpServer(
+    private val overlayManager: OverlayManager,
+    port: Int = 7979
+) {
     private val logTag = "TvPop"
 
     @Volatile
-    private var server = embeddedServer(Netty, port = 7979) {
+    private var server = embeddedServer(CIO, port = port) {
         install(ContentNegotiation) {
             json(
                 Json {

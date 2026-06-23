@@ -51,6 +51,16 @@
                     android:textSize="15sp"
                     android:visibility="gone" />
             </LinearLayout>
+
+            <Button
+                android:id="@+id/dismissButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:text="@string/overlay_dismiss"
+                android:textAllCaps="false" />
         </FrameLayout>
     </androidx.cardview.widget.CardView>
 
